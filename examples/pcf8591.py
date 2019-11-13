@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 # www.elecrow.com
-
 import smbus
 import time
+
+# NOTE: the PCF8591 script can be used both with photoresistance example and flame sensor example
+# please follow up the instructions on the PCF8591 schematic to connect the right sensors in the right way.
 
 address = 0x48
 cmd = 0x40
