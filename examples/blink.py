@@ -8,7 +8,7 @@ import RPi.GPIO as GPIO
 # define LED pin
 led_pin = 17
 
-# set GPIO mode to GPIO.BOARD
+# set GPIO mode to GPIO.BCM
 GPIO.setmode(GPIO.BCM)
 # set puin as input
 GPIO.setup(led_pin, GPIO.OUT)
