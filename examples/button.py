@@ -5,13 +5,13 @@
 import RPi.GPIO as GPIO
 import time
 
-# configure both button and buzzer pins
+# configure button pin
 button_pin = 17
 
-# set board mode to GPIO.BOARD
+# set board mode to GPIO.BCM
 GPIO.setmode(GPIO.BCM)
 
-# setup button pin asBu input and buzzer pin as output
+# setup button pin as input
 GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 try:
@@ -23,6 +23,6 @@ try:
         else:
             # it's not pressed
             print("Button Released")
-        time.sleep(0.5)
+        time.sleep(0.1)
 except KeyboardInterrupt:
     GPIO.cleanup()
