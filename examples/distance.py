@@ -6,13 +6,15 @@
 import RPi.GPIO as GPIO
 import time
 
+# we set GPIO mode as GPIO.BCM
 GPIO.setmode(GPIO.BCM)
 
+# we set the pins for the TRIG and ECHO
 TRIG = 23
 ECHO = 24
 
+# measuring distance
 print("Distance Measurement In Progress")
-
 GPIO.setup(TRIG,GPIO.OUT)
 GPIO.setup(ECHO,GPIO.IN)
 
@@ -36,6 +38,7 @@ distance = pulse_duration * 17150
 
 distance = round(distance, 2)
 
+# show the distance in cm
 print("Distance: %scm" % distance)
 
 GPIO.cleanup()
