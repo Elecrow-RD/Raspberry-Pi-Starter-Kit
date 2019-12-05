@@ -69,21 +69,20 @@ def main():
     RGB_LED = RGB()
     
     # Blink Red
-    RGB.turn_on("red")
+    RGB_LED.turn_on("red")
     time.sleep(0.3)
-    RGB.turn_off("red")
+    RGB_LED.turn_off("red")
     time.sleep(0.3)
     
     # Blink Green
-    RGB.turn_on("green")
+    RGB_LED.turn_on("green")
     time.sleep(0.3)
-    RGB.turn_off("green")
+    RGB_LED.turn_off("green")
     time.sleep(0.3)
     
     # Blink Blue
-    RGB.turn_on("blue")
+    RGB_LED.turn_on("blue")
     time.sleep(0.3)
-    RGB.turn_off("blue")
+    RGB_LED.turn_off("blue")
 
 main()
-    
