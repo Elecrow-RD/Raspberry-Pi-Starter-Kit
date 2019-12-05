@@ -12,17 +12,17 @@ ball_switch_pin = 17
 GPIO.setmode(GPIO.BCM)
 
 # setup ball pin input
-GPIO.setup(ball_switch_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(ball_switch_pin, GPIO.IN)
 
 try:
     while True:
         # check ball state
-        if(ball_switch_pin):
-            # Ball is high means on
-            print("Ball is on")
+        if(GPIO.input(ball_switch_pin)):
+            # Ball is high means it's closing the circuit by touching
+            print("Ball is HIGH")
         else:
-            # Ball is low means off
-            print("Ball is off")
+            # Ball is low means it's not closing the circuit
+            print("Ball is LOW")
         time.sleep(0.1)
 except KeyboardInterrupt:
     GPIO.cleanup()
