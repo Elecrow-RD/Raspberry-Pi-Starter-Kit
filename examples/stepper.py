@@ -13,13 +13,13 @@ class Stepmotor:
 	def __init__(self):
 
 		# set GPIO mode
-  GPIO.setmode(GPIO.BCM)
-  # These are the pins which will be used on the Raspberry Pi
-  self.pin_A = 12
-  self.pin_B = 16
-  self.pin_C = 20
-  self.pin_D = 21
-  self.interval = 0.001
+		GPIO.setmode(GPIO.BCM)
+		# These are the pins which will be used on the Raspberry Pi
+		self.pin_A = 12
+		self.pin_B = 16
+		self.pin_C = 20
+		self.pin_D = 21
+		self.interval = 0.001
 
 		# Declare pins as output
 		GPIO.setup(self.pin_A,GPIO.OUT)
