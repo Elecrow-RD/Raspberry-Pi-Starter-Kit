@@ -1,58 +1,137 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
-# original author: https://tutorials-raspberrypi.com/how-to-control-a-stepper-motor-with-raspberry-pi-and-l293d-uln2003a/
-import RPi.GPIO as GPIO
+# Author : Original author ludwigschuster
+# Original Author Github: https://github.com/ludwigschuster/RasPi-GPIO-Stepmotor
+# http://elecrow.com/
+
 import time
- 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-coil_A_1_pin = 17 # pink
-coil_A_2_pin = 18 # orange
-coil_B_1_pin = 27 # blue
-coil_B_2_pin = 22 # yellow
- 
-# adjust if different
-StepCount = 8
-Seq = range(0, StepCount)
-Seq[0] = [0,1,0,0]
-Seq[1] = [0,1,0,1]
-Seq[2] = [0,0,0,1]
-Seq[3] = [1,0,0,1]
-Seq[4] = [1,0,0,0]
-Seq[5] = [1,0,1,0]
-Seq[6] = [0,0,1,0]
-Seq[7] = [0,1,1,0]
- 
-GPIO.setup(enable_pin, GPIO.OUT)
-GPIO.setup(coil_A_1_pin, GPIO.OUT)
-GPIO.setup(coil_A_2_pin, GPIO.OUT)
-GPIO.setup(coil_B_1_pin, GPIO.OUT)
-GPIO.setup(coil_B_2_pin, GPIO.OUT)
- 
-GPIO.output(enable_pin, 1)
- 
-def setStep(w1, w2, w3, w4):
-    GPIO.output(coil_A_1_pin, w1)
-    GPIO.output(coil_A_2_pin, w2)
-    GPIO.output(coil_B_1_pin, w3)
-    GPIO.output(coil_B_2_pin, w4)
- 
-def forward(delay, steps):
-    for i in range(steps):
-        for j in range(StepCount):
-            setStep(Seq[j][0], Seq[j][1], Seq[j][2], Seq[j][3])
-            time.sleep(delay)
- 
-def backwards(delay, steps):
-    for i in range(steps):
-        for j in reversed(range(StepCount)):
-            setStep(Seq[j][0], Seq[j][1], Seq[j][2], Seq[j][3])
-            time.sleep(delay)
- 
-if __name__ == '__main__':
-    while True:
-        delay = raw_input("Time Delay (ms)?")
-        steps = raw_input("How many steps forward? ")
-        forward(int(delay) / 1000.0, int(steps))
-        steps = raw_input("How many steps backwards? ")
-        backwards(int(delay) / 1000.0, int(steps))
+import RPi.GPIO as GPIO
+import math
+
+class Stepmotor:
+
+	def __init__(self):
+
+		# set GPIO mode
+  GPIO.setmode(GPIO.BCM)
+  # These are the pins which will be used on the Raspberry Pi
+  self.pin_A = 12
+  self.pin_B = 16
+  self.pin_C = 20
+  self.pin_D = 21
+  self.interval = 0.001
+
+		# Declare pins as output
+		GPIO.setup(self.pin_A,GPIO.OUT)
+		GPIO.setup(self.pin_B,GPIO.OUT)
+		GPIO.setup(self.pin_C,GPIO.OUT)
+		GPIO.setup(self.pin_D,GPIO.OUT)
+		GPIO.output(self.pin_A, False)
+		GPIO.output(self.pin_B, False)
+		GPIO.output(self.pin_C, False)
+		GPIO.output(self.pin_D, False)
+
+	def Step1(self):
+
+		GPIO.output(self.pin_D, True)
+		time.sleep(self.interval)
+		GPIO.output(self.pin_D, False)
+
+	def Step2(self):
+
+		GPIO.output(self.pin_D, True)
+		GPIO.output(self.pin_C, True)
+		time.sleep(self.interval)
+		GPIO.output(self.pin_D, False)
+		GPIO.output(self.pin_C, False)
+
+	def Step3(self):
+
+		GPIO.output(self.pin_C, True)
+		time.sleep(self.interval)
+		GPIO.output(self.pin_C, False)
+
+	def Step4(self):
+
+		GPIO.output(self.pin_B, True)
+		GPIO.output(self.pin_C, True)
+		time.sleep(self.interval)
+		GPIO.output(self.pin_B, False)
+		GPIO.output(self.pin_C, False)
+
+	def Step5(self):
+
+		GPIO.output(self.pin_B, True)
+		time.sleep(self.interval)
+		GPIO.output(self.pin_B, False)
+
+	def Step6(self):
+
+		GPIO.output(self.pin_A, True)
+		GPIO.output(self.pin_B, True)
+		time.sleep(self.interval)
+		GPIO.output(self.pin_A, False)
+		GPIO.output(self.pin_B, False)
+
+	def Step7(self):
+
+		GPIO.output(self.pin_A, True)
+		time.sleep(self.interval)
+		GPIO.output(self.pin_A, False)
+
+	def Step8(self):
+
+		GPIO.output(self.pin_D, True)
+		GPIO.output(self.pin_A, True)
+		time.sleep(self.interval)
+		GPIO.output(self.pin_D, False)
+		GPIO.output(self.pin_A, False)
+
+	def turn(self,count):
+		for i in range (int(count)):
+			self.Step1()
+			self.Step2()
+			self.Step3()
+			self.Step4()
+			self.Step5()
+			self.Step6()
+			self.Step7()
+			self.Step8()
+
+	def close(self):
+		# cleanup the GPIO pin use
+		GPIO.cleanup()
+
+	def turnSteps(self, count):
+		# Turn n steps
+		# (supply with number of steps to turn)
+		for i in range (count):
+			self.turn(1)
+
+	def turnDegrees(self, count):
+		# Turn n degrees (small values can lead to inaccuracy)
+		# (supply with degrees to turn)
+		self.turn(round(count*512/360,0))
+
+	def turnDistance(self, dist, rad):
+		# Turn for translation of wheels or coil (inaccuracies involved e.g. due to thickness of rope)
+		# (supply with distance to move and radius in same metric)
+		self.turn(round(512*dist/(2*math.pi*rad),0))
+
+def main():
+
+	print("moving started")
+	motor = Stepmotor()
+	print("One Step")
+	motor.turnSteps(1)
+	time.sleep(0.5)
+	print("20 Steps")
+	motor.turnSteps(20)
+	time.sleep(0.5)
+	print("quarter turn")
+	motor.turnDegrees(90)
+	print("moving stopped")
+	motor.close()
+
+if __name__ == "__main__":
+    main()
