@@ -1,43 +1,53 @@
 #!/usr/bin/python
+# code modified, tweaked and tailored from code by bertwert 
+# on RPi forum thread topic 91796
+# modified code by raspi.tv
 
+import RPi.GPIO as GPIO
 import time
-import datetime
-from Adafruit_LED_Backpack import SevenSegment
-
-# ===========================================================================
-# Clock Example
-# ===========================================================================
-segment = SevenSegment.SevenSegment(address=0x70)
-
-# Initialize the display. Must be called once before using the display.
-segment.begin()
-
-print("Press CTRL+Z to exit")
-
-# Continually update the time on a 4 char, 7-segment display
+GPIO.setmode(GPIO.BCM)
+ 
+# GPIO ports for the 7seg pins
+segments =  (11,4,23,8,7,10,18,25)
+# 7seg_segment_pins (11,7,4,2,1,10,5,3) +  100R inline
+ 
+for segment in segments:
+    GPIO.setup(segment, GPIO.OUT)
+    GPIO.output(segment, 0)
+ 
+# GPIO ports for the digit 0-3 pins 
+digits = (22,27,17,24)
+# 7seg_digit_pins (12,9,8,6) digits 0-3 respectively
+ 
+for digit in digits:
+    GPIO.setup(digit, GPIO.OUT)
+    GPIO.output(digit, 1)
+ 
+num = {' ':(0,0,0,0,0,0,0),
+    '0':(1,1,1,1,1,1,0),
+    '1':(0,1,1,0,0,0,0),
+    '2':(1,1,0,1,1,0,1),
+    '3':(1,1,1,1,0,0,1),
+    '4':(0,1,1,0,0,1,1),
+    '5':(1,0,1,1,0,1,1),
+    '6':(1,0,1,1,1,1,1),
+    '7':(1,1,1,0,0,0,0),
+    '8':(1,1,1,1,1,1,1),
+    '9':(1,1,1,1,0,1,1)}
+ 
 try:
-  while(True):
-    now = datetime.datetime.now()
-    hour = now.hour
-    minute = now.minute
-    second = now.second
-
-    segment.clear()
-    # Set hours
-    segment.set_digit(0, int(hour / 10))     # Tens
-    segment.set_digit(1, hour % 10)          # Ones
-    # Set minutes
-    segment.set_digit(2, int(minute / 10))   # Tens
-    segment.set_digit(3, minute % 10)        # Ones
-    # Toggle colon
-    segment.set_colon(second % 2)              # Toggle colon at 1Hz
-
-    # Write the display buffer to the hardware.  This must be called to
-    # update the actual display LEDs.
-    segment.write_display()
-
-    # Wait a quarter second (less than 1 second to prevent colon blinking getting$
-    time.sleep(0.25)
-except KeyboardInterrupt:
-    segment.clear()
-    segment.write_display()
+    while True:
+        n = time.ctime()[11:13]+time.ctime()[14:16]
+        s = str(n).rjust(4)
+        for digit in range(4):
+            for loop in range(0,7):
+                GPIO.output(segments[loop], num[s[digit]][loop])
+                if (int(time.ctime()[18:19])%2 == 0) and (digit == 1):
+                    GPIO.output(25, 1)
+                else:
+                    GPIO.output(25, 0)
+            GPIO.output(digits[digit], 0)
+            time.sleep(0.001)
+            GPIO.output(digits[digit], 1)
+finally:
+    GPIO.cleanup()
