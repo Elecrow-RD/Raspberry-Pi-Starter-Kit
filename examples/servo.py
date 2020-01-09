@@ -12,7 +12,7 @@ class sg90:
 
   def __init__( self, direction):
 
-    self.pin = 25
+    self.pin = 18
     GPIO.setmode( GPIO.BCM )
     GPIO.setup( self.pin, GPIO.OUT )
     self.direction = int( direction )
